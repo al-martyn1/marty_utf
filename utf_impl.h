@@ -332,6 +332,35 @@ std::size_t getNumberOfBytesUtf8(utf8_char_t ch)
 }
 
 inline
+std::size_t getStringLenUtf8(const std::string &str)
+{
+    using marty_utf::utf8_char_t;
+
+    std::size_t numSymbols = 0;
+
+    std::size_t curPos = 0;
+
+    while(curPos<str.size())
+    {
+        auto uch = (utf8_char_t)str[curPos];
+
+        auto symbolNumBytes = getNumberOfBytesUtf8(uch);
+
+        std::size_t nextPos = curPos + symbolNumBytes;
+
+        if (nextPos<=str.size())
+        {
+            ++numSymbols;
+        }
+
+        curPos = nextPos;
+    }
+
+    return numSymbols;
+
+}
+
+inline
 const utf8_char_t* utf8_find_first_symbol_byte(const utf8_char_t *pBegin, const utf8_char_t *pEnd)
 {
     while( (pBegin!=pEnd) && ((*pBegin)&0xC0u)==0x80u ) // 0xC0 - 0b1100_0000, 0x80 - 0b1000_0000
