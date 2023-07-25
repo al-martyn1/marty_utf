@@ -35,7 +35,7 @@ typedef std::uint16_t    utf16_char_t  ;
 typedef std::uint8_t     utf8_char_t   ;
 
 
-
+//! Тип BOM - Byte Order Mark
 enum class EBom
 {
     noBom    = 0,   // 
@@ -44,6 +44,7 @@ enum class EBom
     utf8     = 3    // 0xEF 0xBB 0xBF
 };
 
+//! Возвращает длину BOM
 inline
 std::size_t getBomLen(EBom eb)
 {
@@ -57,6 +58,7 @@ std::size_t getBomLen(EBom eb)
     }
 }
 
+//! Определяет тип BOM
 inline
 EBom detectBom(const utf8_char_t *pBegin, const utf8_char_t *pEnd)
 {
@@ -102,6 +104,7 @@ EBom detectBom(const utf8_char_t *pBegin, const utf8_char_t *pEnd)
     return EBom::noBom;
 }
 
+//! Определяет тип BOM
 inline
 EBom detectBom(const std::string &str)
 {
@@ -114,7 +117,7 @@ EBom detectBom(const std::string &str)
 }
 
 
-
+//! Исключение - ошибка конвертации в/из кодировки юникода
 class unicode_convert_error : public std::runtime_error // exception
 {
 
@@ -129,6 +132,8 @@ public:
 }; // class convert_error
 
 
+
+//! Утилиты для определения value_type по типу итератора
 namespace utils {
 
 template<class OutputIterator>
@@ -151,13 +156,14 @@ using detected_value_type_t = typename detected_value_type<T>::type;
 // template<typename OutputIterator>
 
 
-
+//! Обмен байтов в слове
 inline
 utf16_char_t byteSwap(utf16_char_t b)
 {
     return (utf16_char_t)((((b)&0xFF)<<8) | ((b>>8)&0xFF));
 }
 
+//! Обмен байтов в слове, условный
 inline
 utf16_char_t byteSwapEx(utf16_char_t ch, bool swapBytes)
 {
@@ -615,7 +621,19 @@ std::string string_from_utf32(const utf32_char_t *pBegin, const utf32_char_t *pE
     return strRes;
 }
 
+inline
+std::string string_from_utf32(const std::basic_string<utf32_char_t> &str)
+{
+    // return string_from_utf32(str.begin(), str.end());
+    // return string_from_utf32((const utf32_char_t*)str.begin(), (const utf32_char_t*)str.end());
+    return string_from_utf32(&str.front(), &str.back()+1);
+}
 
+//TODO: !!! Надо бы сделать:
+// UTF-32 из string
+// UTF-32 из wstring
+// string  из UTF-32
+// wstring из UTF-32
 
 
 } // namespace marty_utf
