@@ -366,6 +366,19 @@ std::size_t getStringLenUtf8(const std::string &str)
 
 }
 
+//-----------------------------------------------------------------------------
+//! Вычисляет длину символа в char'ах для однобайтных кодировок
+struct SymbolLenCalculatorEncodingUtf8
+{
+    std::size_t operator()(const char *pCh) const
+    {
+        if (!pCh)
+            return 1;
+        return getNumberOfBytesUtf8((utf8_char_t)*pCh);
+    }
+};
+
+
 inline
 const utf8_char_t* utf8_find_first_symbol_byte(const utf8_char_t *pBegin, const utf8_char_t *pEnd)
 {
