@@ -577,38 +577,38 @@ void utf8_from_utf32_impl(const utf32_char_t *pBegin, const utf32_char_t *pEnd, 
         }
         else if (ch<=0x7FFu) // 2
         {
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 6)&0x1F | 0xC0);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 0)&0x3F | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 6)&0x1F) | 0xC0);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 0)&0x3F) | 0x80);
         }
         else if (ch<=0xFFFFu) // 3
         {
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>12)&0x0F | 0xE0);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 6)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 0)&0x3F | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>12)&0x0F) | 0xE0);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 6)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 0)&0x3F) | 0x80);
         }
         else if (ch<=0x1FFFFFu) // 4 
         {
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>18)&0x07 | 0xF0);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>12)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 6)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 0)&0x3F | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>18)&0x07) | 0xF0);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>12)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 6)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 0)&0x3F) | 0x80);
         }
         else if (ch<=0x3FFFFFFu) // 5
         {
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>21)&0x03 | 0xF8);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>18)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>12)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 6)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 0)&0x3F | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>21)&0x03) | 0xF8);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>18)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>12)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 6)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 0)&0x3F) | 0x80);
         }
         else // 6
         {
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>24)&0x01 | 0xFC);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>21)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>18)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>>12)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 6)&0x3F | 0x80);
-            *pOutputIter++ = (value_type)(utf8_char_t)((ch>> 0)&0x3F | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>24)&0x01) | 0xFC);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>21)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>18)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>>12)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 6)&0x3F) | 0x80);
+            *pOutputIter++ = (value_type)(utf8_char_t)(((ch>> 0)&0x3F) | 0x80);
         }
     }
 
