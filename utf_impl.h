@@ -366,6 +366,48 @@ std::size_t getStringLenUtf8(const std::string &str)
 
 }
 
+template<typename CharType>
+struct UtfInputIterator
+{
+
+    UtfInputIterator& operator++() // pre-increment - инкрементировать, и вернуть себя
+    {
+        incImpl();
+        return *this;
+    }
+
+    UtfInputIterator operator++(int)
+    {
+        auto copyOfThis = *this;
+        incImpl();
+        return copyOfThis;
+    }
+
+    bool operator==(UtfInputIterator other) const
+    {
+        return m_ptr==other.m_ptr && m_ptrEnd==other.m_ptrEnd;
+    }
+
+    bool operator!=(UtfInputIterator other) const
+    {
+        return m_ptr!=other.m_ptr || m_ptrEnd!=other.m_ptrEnd;
+    }
+
+
+protected:
+
+    void incImpl()
+    {
+        std::size_t chLen = getNumberOfBytesUtf8(*m_ptr);
+        for(std::size_t i=0; i!=chLen && m_ptr!=m_ptrEnd; ++i, ++m_ptr) {}
+    }
+
+    const CharType* m_ptr     = 0;
+    const CharType* m_ptrEnd  = 0;
+};
+
+// std::size_t getNumberOfBytesUtf8(utf8_char_t ch)
+
 //-----------------------------------------------------------------------------
 //! Вычисляет длину символа в char'ах для однобайтных кодировок
 struct SymbolLenCalculatorEncodingUtf8
