@@ -234,6 +234,9 @@ std::basic_string<utf32_char_t> utf32_from_utf16( const utf16_char_t *pBegin, co
         }
         else if (ch>=0xDC00u)
         {
+            #ifdef UMBA_DEBUGBREAK
+                UMBA_DEBUGBREAK();
+            #endif
             throw unicode_convert_error((std::size_t)(pChar-pBegin), swapBytes ? "Invalid code sequence in UTF-16 with byte swap" : "Invalid code sequence in UTF-16");
         }
         else
@@ -241,6 +244,9 @@ std::basic_string<utf32_char_t> utf32_from_utf16( const utf16_char_t *pBegin, co
             utf32_char_t u32ch = ((utf32_char_t)(ch&0x03FFu)) << 10;
             if (pChar==pEnd)
             {
+                #ifdef UMBA_DEBUGBREAK
+                    UMBA_DEBUGBREAK();
+                #endif
                 throw unicode_convert_error((std::size_t)(pChar-pBegin), "Invalid code sequence in UTF-16 - unexpected end of data");
             }
 
@@ -248,6 +254,9 @@ std::basic_string<utf32_char_t> utf32_from_utf16( const utf16_char_t *pBegin, co
            
             if (ch2<0xDC00u || ch2>0xDFFFu)
             {
+                #ifdef UMBA_DEBUGBREAK
+                    UMBA_DEBUGBREAK();
+                #endif
                 throw unicode_convert_error((std::size_t)(pChar-pBegin), swapBytes ? "Invalid code sequence in UTF-16 with byte swap (pair second)" : "Invalid code sequence in UTF-16 (pair second)");
             }
 
@@ -319,22 +328,44 @@ std::basic_string<utf16_char_t> utf16_from_utf32( const std::basic_string<utf32_
 // https://datatracker.ietf.org/doc/html/rfc2279
 
 // UCS-4 range (hex.)    UTF-8 octet sequence (binary)
-// 0000 0000-0000 007F   0xxxxxxx
-// 0000 0080-0000 07FF   110xxxxx 10xxxxxx
-// 0000 0800-0000 FFFF   1110xxxx 10xxxxxx 10xxxxxx
-// 0001 0000-001F FFFF   11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-// 0020 0000-03FF FFFF   111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
-// 0400 0000-7FFF FFFF   1111110x 10xxxxxx ... 10xxxxxx
+// 0000 0000-0000 007F   0xxxxxxx                                        0x80 == 0x00
+// 0000 0080-0000 07FF   110xxxxx 10xxxxxx                               0xE0 == 0xC0
+// 0000 0800-0000 FFFF   1110xxxx 10xxxxxx 10xxxxxx                      0xF0 == 0xE0
+// 0001 0000-001F FFFF   11110xxx 10xxxxxx 10xxxxxx 10xxxxxx             0xF8 == 0xF0
+// 0020 0000-03FF FFFF   111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx    0xFC == 0xF8
+// 0400 0000-7FFF FFFF   1111110x 10xxxxxx ... 10xxxxxx                  0xFE == 0xFC
+
+constexpr
+inline bool utfCheckMaskedValue(utf8_char_t ch, utf8_char_t mask, utf8_char_t value)
+{
+    utf8_char_t masked = utf8_char_t(ch&mask);
+    return masked==value;
+}
+
+
+constexpr
 inline
 std::size_t getNumberOfBytesUtf8(utf8_char_t ch)
 {
-    if ((ch&0x80)==0)          return 1;
-    else if ((ch&0xE0)==0xC0)  return 2;
-    else if ((ch&0xF0)==0xE0)  return 3;
-    else if ((ch&0xF8)==0xF0)  return 4;
-    else if ((ch&0xFC)==0xF8)  return 5;
-    else if ((ch&0xFE)==0xFC)  return 6;
-    else                       return 0;
+    return (utfCheckMaskedValue(ch,0x80,0))
+         ? 1u
+         : ( (utfCheckMaskedValue(ch,0xE0,0xC0))
+           ? 2u
+           : ( (utfCheckMaskedValue(ch,0xF0,0xE0))
+             ? 3u
+             : ( (utfCheckMaskedValue(ch,0xF8,0xF0))
+               ? 4u
+               : ( (utfCheckMaskedValue(ch,0xFC,0xF8))
+                 ? 5u
+                 : ( (utfCheckMaskedValue(ch,0xFE,0xFC))
+                   ? 6u
+                   : 0u
+                   )
+                 )
+               )
+             )
+           )
+         ;
 }
 
 inline
@@ -512,7 +543,12 @@ void utf32_from_utf8_impl( const utf8_char_t *pBegin, const utf8_char_t *pEnd, O
         {
             // strRes.append(1, ch32); // complete symbol extracted
             if (ch32>0x10FFFFu)
+            {
+                #ifdef UMBA_DEBUGBREAK
+                    UMBA_DEBUGBREAK();
+                #endif
                 throw unicode_convert_error((std::size_t)(pChar-pBegin), "Invalid code sequence in UTF-8 - symbol code is out of range (>0x10FFFFu)");
+            }
 
             *pOutputIter++ = ch32;
         }
