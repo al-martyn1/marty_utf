@@ -721,10 +721,10 @@ std::string string_from_utf32(const std::basic_string<utf32_char_t> &str)
 }
 
 //TODO: !!! Надо бы сделать:
-// UTF-32 из string
-// UTF-32 из wstring
-// string  из UTF-32
-// wstring из UTF-32
+// UTF-32 из string.
+// UTF-32 из wstring.
+// string  из UTF-32.
+// wstring из UTF-32.
 
 
 } // namespace marty_utf
