@@ -2,8 +2,9 @@
 
 #include "utf_impl.h"
 
-
-namespace marty_utf {
+// #include "marty_utf/utf.h"
+namespace marty {
+namespace utf {
 
 // using marty_utf::toUtf8;
 // using marty_utf::fromUtf8
@@ -92,6 +93,8 @@ std::wstring fromUtf8(const std::string &str)
 
 
 
-} // namespace marty_utf
+} // namespace utf
+} // namespace marty
+
 
 
