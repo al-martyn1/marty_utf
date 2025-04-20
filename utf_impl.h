@@ -665,6 +665,8 @@ struct UtfInputIterator
     using pointer_type       = CharType*;
     using const_pointer_type = const CharType*;
 
+    using ctor_require_two_pointers = void; // check CTOR requires single pointer or two pointers
+
 
     UtfInputIterator& operator++() // pre-increment - инкрементировать, и вернуть себя
     {
@@ -694,6 +696,7 @@ struct UtfInputIterator
     UtfInputIterator(UtfInputIterator &&other) = default;
     UtfInputIterator& operator=(const UtfInputIterator &other) = default;
     UtfInputIterator& operator=(UtfInputIterator &&other) = default;
+
 
     template<typename OtherCharType>
     UtfInputIterator(const OtherCharType* b, const OtherCharType* e) : m_ptr(const_pointer_type(b)), m_ptrEnd(const_pointer_type(e)) {}
@@ -773,6 +776,22 @@ struct UtfInputIterator
         return symbolOffset;
     }
 
+    const CharType* rawPtr() const
+    {
+        return m_ptr;
+    }
+
+    const CharType* begin() const
+    {
+        return m_ptr;
+    }
+
+    const CharType* end() const
+    {
+        return m_ptrEnd;
+    }
+
+
 protected:
 
     bool isIteratorEnd() const
@@ -804,6 +823,14 @@ protected:
     std::size_t symbolOffset = 0;
 };
 
+//-----------------------------------------------------------------------------
+template<typename CharType>
+const char* rawConstCharPtrFromIterator(UtfInputIterator<CharType> it)
+{
+   return reinterpret_cast<const char*>(it.rawPtr());
+}
+
+//-----------------------------------------------------------------------------
 // std::size_t getNumberOfBytesUtf8(utf8_char_t ch)
 
 //-----------------------------------------------------------------------------
@@ -1113,7 +1140,7 @@ struct UtfOutputIterator
         return true;
     }
  
-    UtfOutputIterator() = delete;
+    UtfOutputIterator() : m_pStr(0) {}
     UtfOutputIterator(const UtfOutputIterator &other) = default;
     UtfOutputIterator(UtfOutputIterator &&other) = default;
     UtfOutputIterator& operator=(const UtfOutputIterator &other) = default;
@@ -1130,6 +1157,10 @@ struct UtfOutputIterator
 
     UtfOutputIterator& operator=(utf32_char_t ch32)
     {
+        if (!m_pStr)
+        {
+            MARTY_UTF_ASSERT_FAIL("Underlaying string ptr is null, default CTOR used to create UtfOutputIterator?");
+        }
         utf8_from_utf32_impl(&ch32, &ch32+1, std::back_inserter(*m_pStr));
         return *this;
     }
