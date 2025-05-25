@@ -8,6 +8,7 @@
 #include <exception>
 #include <stdexcept>
 #include <iterator>
+#include <vector>
 
 #include <cstdint>
 #include <cwchar>
